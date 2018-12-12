@@ -1,18 +1,25 @@
 package main
 
 import (
-	"os"
 	"io"
 	"log"
 	"net/http"
+	"os"
+	"time"
 )
 
 func main() {
-	response, err := http.Get("https://www.devdungeon.com")
-	defer response.Body.Close()
+	// Create HTTP client with timeout
+	client := &http.Client{
+		Timeout: 30 * time.Second,
+	}
+
+	// Make request
+	response, err := client.Get("https://www.devdungeon.com")
 	if err != nil {
 		log.Fatal(err)
 	}
+	defer response.Body.Close()
 
 	// Copy data from the response to standard output
 	n, err := io.Copy(os.Stdout, response.Body)
@@ -21,5 +28,5 @@ func main() {
 	}
 
 	log.Println("Number of bytes copied to STDOUT:", n)
-	
+
 }

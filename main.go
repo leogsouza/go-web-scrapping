@@ -14,8 +14,15 @@ func main() {
 		Timeout: 30 * time.Second,
 	}
 
+	// Create and modify HTTP request before sending
+	request, err := http.NewRequest("GET", "https://www.devdungeon.com", nil)
+	if err != nil {
+		log.Fatal(err)
+	}
+	request.Header.Set("User-Agent", "Not Firefox")
+
 	// Make request
-	response, err := client.Get("https://www.devdungeon.com")
+	response, err := client.Do(request)
 	if err != nil {
 		log.Fatal(err)
 	}

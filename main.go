@@ -2,36 +2,38 @@ package main
 
 import (
 	"fmt"
-	"io/ioutil"
 	"log"
 	"net/http"
-	"regexp"
+
+	"github.com/PuerkitoBio/goquery"
 )
+
+// This will get called for each HTML element found
+func processElement(index int, element *goquery.Selection) {
+	// See if the href attribute exists on the element
+	href, exists := element.Attr("href")
+	if exists {
+		fmt.Println(href)
+	}
+}
 
 func main() {
 
-	// Make request
+	// Make HTTP request
 	response, err := http.Get("https://www.devdungeon.com/archive")
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer response.Body.Close()
 
-	// Read response data in to memory
-	body, err := ioutil.ReadAll(response.Body)
+	// Create a goquery document from the HTTP response
+	document, err := goquery.NewDocumentFromReader(response.Body)
 	if err != nil {
-		log.Fatal("Error reading HTTP body.", err)
+		log.Fatal("Error loading HTTP response body.", err)
 	}
 
-	// Create a regular expression to find comments
-	re := regexp.MustCompile("<!--(.|\n)*?-->")
-	comments := re.FindAllString(string(body), -1)
-	if comments == nil {
-		fmt.Println("No matches.")
-	} else {
-		for _, comment := range comments {
-			fmt.Println(comment)
-		}
-	}
+	// Find all links and process them with the function
+	// defined earlier
+	document.Find("a").Each(processElement)
 
 }

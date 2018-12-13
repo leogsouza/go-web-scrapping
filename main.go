@@ -5,31 +5,26 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"time"
 )
 
 func main() {
-	// Create HTTP client with timeout
-	client := &http.Client{
-		Timeout: 30 * time.Second,
-	}
-
-	// Create and modify HTTP request before sending
-	request, err := http.NewRequest("GET", "https://www.devdungeon.com", nil)
-	if err != nil {
-		log.Fatal(err)
-	}
-	request.Header.Set("User-Agent", "Not Firefox")
 
 	// Make request
-	response, err := client.Do(request)
+	response, err := http.Get("https://www.devdungeon.com/archive")
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer response.Body.Close()
 
+	// Create output file
+	outFile, err := os.Create("output.html")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer outFile.Close()
+
 	// Copy data from the response to standard output
-	n, err := io.Copy(os.Stdout, response.Body)
+	n, err := io.Copy(outFile, response.Body)
 	if err != nil {
 		log.Fatal(err)
 	}

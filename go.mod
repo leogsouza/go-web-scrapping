@@ -1,6 +1,8 @@
 module github.com/leogsouza/web-scrapping
 
+require github.com/PuerkitoBio/goquery v1.5.0
+
 require (
-	github.com/PuerkitoBio/goquery v1.5.0
-	golang.org/x/net v0.0.0-20181207154023-610586996380 // indirect
+	github.com/andybalholm/cascadia v1.0.0 // indirect
+	golang.org/x/net v0.7.0 // indirect
 )
